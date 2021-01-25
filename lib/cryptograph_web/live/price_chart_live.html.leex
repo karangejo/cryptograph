@@ -1,0 +1,17 @@
+<form phx-change="interval-change">
+    <label for="live-chart-select_interval">Update interval</label>
+    <select name="live-chart-select-interval">
+        <%= options_for_select([
+                                "5s": 5000,
+                                "10s": 10000,
+                                "1m": 600000,
+                                "5m": 3000000
+                                ],
+                                         @update_interval) %>
+    </select>
+</form>
+<div id="ohlc-chart"" phx-hook="apexLivePriceChart">
+</div>
+<div style="width: 1000px; height: 600px;" phx-update="ignore">
+    <canvas id="myChart" phx-hook="livePriceChart" ></canvas>
+</div>
