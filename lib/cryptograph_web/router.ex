@@ -20,6 +20,7 @@ defmodule CryptographWeb.Router do
     live "/", HomePageLive, :index
     live "/pricechart/:crypto_id/:price_currency", PriceChartLive, :index
     live "/ohlcchart/:crypto_id/:price_currency", OHLCChartLive, :index
+    live "/newssentiment/:search_term", NewsSentimentLive, :index
   end
 
   # Other scopes may use custom stacks.

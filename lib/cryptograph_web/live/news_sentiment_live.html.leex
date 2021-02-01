@@ -1,0 +1,16 @@
+<h2>News Sentiment</h2>
+<h4>Search Term: <%= @search_term %></h4>
+<h4>Sentiment Average: <%= @sentiment %></h4>
+<ul>
+<%= for {article, index} <- Enum.with_index(@articles) do %>
+    <li>
+            <a href="<%= article["url"] %>">
+                <%= article["title"] %>
+            </a>
+            <br/>
+            sentiment score: <%= Enum.at(@sentiment_list, index) %>
+            <br/>
+            <%= article["description"] %>
+    </li>
+<% end %>
+</ul>

@@ -25,17 +25,40 @@ hooks.apexLivePriceChart = {
         var chartData = []
         var options = {
             series: [{
+              name: 'price',
               data: chartData
           }],
             chart: {
             type: 'line',
+          },
+          animations: {
+            enabled: true,
+            easing: 'linear',
+            dynamicAnimation: {
+              speed: 1000
+            }
+          },
+          stroke: {
+            curve: 'smooth',
+          },
+          yaxis: {
+            labels: {
+              formatter: function (value) {
+                return "$" + value;
+              }
+            },
           },
           title: {
             text: 'Title',
             align: 'left'
           },
           xaxis: {
-            type: 'datetime'
+            type: 'datetime',
+            labels: {
+                formatter: function (value, timestamp) {
+                  return new Date(timestamp).toLocaleTimeString() // The formatter function overrides format property
+                } 
+            }
           }
           };
   
@@ -61,99 +84,60 @@ hooks.apexLivePriceChart = {
                 data: updated_points
             }])
         })
-
-    }
-
-}
-hooks.livePriceChart = {
-    mounted() {
-        var ctx = this.el.getContext('2d'); 
-        var chart = new Chart(ctx, {
-        // The type of chart we want to create
-        type: 'line',
-        // The data for our dataset
-        data: {
-            labels: [],
-            datasets: [{
-                label: 'price',
-                data: [],
-                borderColor: '#3F3FBF'
-            }]
-        },
-        // Configuration options go here
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            title: {
-                display: true,
-                text: "A TITLE"
-            },
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        callback: function(value, index, values) {
-                            return "$" + value
-                        }
-                    }
-                }],
-                xAxes: [{
-                    ticks: {
-                        callback: function(value, index, values) {
-                            let date =  new Date(value)
-                            return date.toLocaleTimeString()
-                        }
-                    }
-                }]
-            }
-        }
-        });
-
-        const rem_n_first_elements = (num, array) => {
-            for(var i = 0; i < num; i++ ){
-                array.shift()
-            }
-            return array
-        }
-
-        this.handleEvent("points", ({points, labels}) => {
-            let num_to_remove = 0
-            if(chart.data.datasets[0].data.length >= 20) {
-                num_to_remove = 1
-            }
-            const updated_points = rem_n_first_elements(num_to_remove, chart.data.datasets[0].data.concat(points))
-            const updated_labels = rem_n_first_elements(num_to_remove, chart.data.labels.concat(labels))
-            chart.data.datasets[0].data = updated_points
-            chart.data.labels = updated_labels
-            chart.update()
-        })
         
         this.handleEvent("chart-label", ({chart_label}) => {
-            chart.options.title.text = chart_label
-            chart.update()
+            chart.updateOptions({
+                title: {
+                    text: chart_label 
+                }
+            })
         })
 
     }
 
 }
-
 hooks.ohlcChart = {
     mounted() {
 
-        this.handleEvent("ohlc-data", ({ohlc_data}) => {
-            var options = {
-                chart: {
-                    type: 'candlestick'
+        var options = {
+            chart: {
+                type: 'candlestick'
+            },
+            series: [{
+                data: []
+            }],
+            title: {
+                 text: 'Title',
+                 align: 'left'
+            },
+            yaxis: {
+                labels: {
+                    formatter: function (value) {
+                      return "$" + value;
+                    }
                 },
-                series: [{
-                    data: ohlc_data
-                }],
-                xaxis: {
-                    type: 'datetime'
-                }
+            },
+            xaxis: {
+                type: 'datetime'
             }
+        }
 
-            var chart = new ApexCharts(this.el, options)
-            chart.render()
+        var chart = new ApexCharts(this.el, options)
+            
+        chart.render()
+        
+        this.handleEvent("ohlc-data", ({ohlc_data}) => {
+            chart.updateSeries([{
+                data: ohlc_data
+            }])
+        })
+        
+        this.handleEvent("chart-label", ({chart_label}) => {
+            chart.updateOptions({
+                title: {
+                    text: chart_label 
+                }
+            })
         })
     }
 }
