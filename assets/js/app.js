@@ -16,7 +16,6 @@ import "phoenix_html"
 import {Socket} from "phoenix"
 import NProgress from "nprogress"
 import {LiveSocket} from "phoenix_live_view"
-import Chart from 'chart.js'
 import ApexCharts from 'apexcharts'
 
 let hooks = {}
@@ -79,13 +78,12 @@ hooks.apexLivePriceChart = {
             }
             const updated_points = rem_n_first_elements(num_to_remove, chartData.concat([[Date.parse(labels), points]]))
             chartData = updated_points
-            console.log(updated_points)
             chart.updateSeries([{
                 data: updated_points
             }])
         })
         
-        this.handleEvent("chart-label", ({chart_label}) => {
+        this.handleEvent("current-chart-label", ({chart_label}) => {
             chart.updateOptions({
                 title: {
                     text: chart_label 
@@ -100,15 +98,27 @@ hooks.ohlcChart = {
     mounted() {
 
         var options = {
-            chart: {
-                type: 'candlestick'
-            },
-            series: [{
-                data: []
-            }],
+            series: [
+                {
+                    name: 'sma',
+                    type: 'line',
+                    data: []
+                },
+                {
+                    name: 'ohlc',
+                    type: 'candlestick',
+                    data: []
+                }
+            ],
             title: {
                  text: 'Title',
                  align: 'left'
+            },
+            chart: {
+                type: 'line'
+            },
+            stroke: {
+                width: [3, 1]
             },
             yaxis: {
                 labels: {
@@ -126,13 +136,30 @@ hooks.ohlcChart = {
             
         chart.render()
         
-        this.handleEvent("ohlc-data", ({ohlc_data}) => {
+        this.handleEvent("ohlc-data", ({ohlc_data, sma_data}) => {
+            chart.updateSeries([
+                {
+                    name: "sma",
+                    type: 'line',
+                    data: sma_data
+                },
+                {
+                    name: "ohlc",
+                    type: 'candlestick',
+                    data: ohlc_data
+                }
+            ])
+        })
+        
+        this.handleEvent("sma-data", ({sma_data}) => {
             chart.updateSeries([{
-                data: ohlc_data
+                name: "sma",
+                type: 'line',
+                data: sma_data
             }])
         })
         
-        this.handleEvent("chart-label", ({chart_label}) => {
+        this.handleEvent("historical-chart-label", ({chart_label}) => {
             chart.updateOptions({
                 title: {
                     text: chart_label 

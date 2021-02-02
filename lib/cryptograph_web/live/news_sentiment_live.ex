@@ -12,9 +12,9 @@ defmodule CryptographWeb.NewsSentimentLive do
             |> assign(:search_term, search_term)
             |> assign(:articles, articles )
             |> assign(:sentiment_list, get_sentiment(headlines))
-            |> assign(:sentiment, get_avg_sentiment_from_list(headlines))}
+            |> assign(:sentiment, get_avg_sentiment_from_list(headlines))
+       }
   end
-
 
   defp get_news_data(search_term) do
     data = NewsApiClient.everything(%{"q" => search_term})

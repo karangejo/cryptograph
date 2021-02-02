@@ -17,7 +17,7 @@ defmodule CryptographWeb.Router do
   scope "/", CryptographWeb do
     pipe_through :browser
 
-    live "/", HomePageLive, :index
+    live "/home/:crypto_id/:price_currency", HomePageLive, :index
     live "/pricechart/:crypto_id/:price_currency", PriceChartLive, :index
     live "/ohlcchart/:crypto_id/:price_currency", OHLCChartLive, :index
     live "/newssentiment/:search_term", NewsSentimentLive, :index

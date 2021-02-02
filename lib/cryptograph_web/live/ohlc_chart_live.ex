@@ -1,5 +1,5 @@
 defmodule CryptographWeb.OHLCChartLive do
-  use CryptographWeb, :live_view
+  use CryptographWeb, :live_component
   alias CoinGeckoApi
 
 
